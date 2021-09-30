@@ -1,0 +1,21 @@
+{
+  "name": "nodejs-shri",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app",
+    "dev": "nodemon src/app",
+    "lint": "eslint --ignore-path .gitignore . --fix"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "eslint": "^7.32.0",
+    "express": "^4.17.1",
+    "husky": "^7.0.2",
+    "nodemon": "^2.0.13",
+    "prettier": "^2.4.1"
+  }
+}
