@@ -1,5 +1,6 @@
 const { replaceBackground } = require('backrem');
 const { createReadStream } = require('fs');
+const sizeOf = require('image-size');
 const db = require('../entities/Database');
 const { BadRequestError, NotFoundError } = require('../errors');
 
@@ -14,11 +15,25 @@ const getImageReadStream = (id) => {
   return createReadStream(filePathname);
 }
 
+const getImageSize = (id) => {
+  const image = db.findOne(id);
+  const filePathname = image.getFilePathname();
+
+  return sizeOf(filePathname);
+}
+
 module.exports = async (req, res, next) => {
   try {
     const { front: frontImageId, back: backImageId, color, threshold } = req.query;
 
-    if (!frontImageId || !backImageId || !color || !threshold) {
+    if (!frontImageId || !backImageId) {
+      throw new BadRequestError();
+    }
+
+    const { width: frontImageWidth, height: frontImageHeight } = getImageSize(frontImageId);
+    const { width: backImageWidth, height: backImageHeight} = getImageSize(backImageId);
+
+    if (frontImageWidth !== backImageWidth || frontImageHeight !== backImageHeight) {
       throw new BadRequestError();
     }
 
@@ -29,10 +44,14 @@ module.exports = async (req, res, next) => {
       throw new NotFoundError();
     }
 
-    const colorArray = color.split(',');
+    let colorArray;
 
-    if (colorArray.length !== 3) {
-      throw new BadRequestError();
+    if (color) {
+      colorArray = color.split(',');
+
+      if (colorArray.length !== 3) {
+        throw new BadRequestError();
+      }
     }
 
     const replaceBackgroundStream = 
