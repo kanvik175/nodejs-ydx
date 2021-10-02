@@ -1,7 +1,8 @@
 const router = require('express').Router();
-const { uploadImages, listImages, mergeImages } = require('../controllers');
+const { uploadImage, listImages, mergeImages } = require('../controllers');
+const upload = require('../middlewares/uploadMulter');
 
-router.post('/upload', uploadImages);
+router.post('/upload', upload.single('image'), uploadImage);
 router.get('/list', listImages);
 router.get('/merge', mergeImages);
 
